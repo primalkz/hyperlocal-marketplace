@@ -21,10 +21,11 @@ export function signToken(userId: string, role: string) {
 }
 
 export function setTokenCookie(res: Response, token: string) {
+  const secure = process.env.NODE_ENV === 'production'
   res.cookie(COOKIE, token, {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: secure ? 'none' : 'lax',
+    secure,
     maxAge: MAX_AGE * 1000,
     path: '/',
   })
