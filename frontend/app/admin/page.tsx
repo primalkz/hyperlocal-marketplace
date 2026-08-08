@@ -30,7 +30,7 @@ export default function Admin() {
   async function load() {
     setErr('')
     try {
-      const v = await api('/admin/vendor')
+      const v = await api('/admin/vendors')
       setVendors(v.vendors ?? [])
       const o = await api('/admin/orders')
       setOrders(o.orders ?? [])
