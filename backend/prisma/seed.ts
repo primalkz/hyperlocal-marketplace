@@ -2,10 +2,10 @@ import 'dotenv/config'
 import { prisma } from '../src/prisma'
 import { hashPassword } from '../src/auth'
 
-const img = (seed: string) => `https://picsum.photos/seed/${seed}/400/300`
+const img = (seed) => `https://picsum.photos/seed/${seed}/400/300`
 
 async function main() {
-  const admin = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: 'admin@local.test' },
     update: {},
     create: { email: 'admin@local.test', passwordHash: await hashPassword('admin123'), role: 'ADMIN' },
@@ -19,23 +19,23 @@ async function main() {
 
   const shop = await prisma.shop.upsert({
     where: { vendorId: vendor.id },
-    update: {},
+    update: { name: 'Sharma Kirana Store', latitude: 19.076, longitude: 72.8777, status: 'APPROVED' },
     create: {
       vendorId: vendor.id,
-      name: 'Sunrise Grocers',
+      name: 'Sharma Kirana Store',
       latitude: 19.076,
       longitude: 72.8777,
       status: 'APPROVED',
     },
   })
 
+  await prisma.product.deleteMany({ where: { shopId: shop.id } })
   await prisma.product.createMany({
     data: [
-      { shopId: shop.id, title: 'Basmati Rice 1kg', image: img('rice'), price: 120, available: true },
-      { shopId: shop.id, title: 'Toor Dal 1kg', image: img('dal'), price: 140, available: true },
-      { shopId: shop.id, title: 'Sunflower Oil 1L', image: img('oil'), price: 180, available: false },
+      { shopId: shop.id, title: 'India Gate Basmati Rice 1kg', image: img('rice'), price: 120, available: true },
+      { shopId: shop.id, title: 'Tata Toor Dal 1kg', image: img('dal'), price: 140, available: true },
+      { shopId: shop.id, title: 'Fortune Sunflower Oil 1L', image: img('oil'), price: 180, available: false },
     ],
-    skipDuplicates: true,
   })
 
   await prisma.user.upsert({
@@ -44,7 +44,7 @@ async function main() {
     create: { email: 'customer@local.test', passwordHash: await hashPassword('customer123'), role: 'CUSTOMER' },
   })
 
-  console.log('seeded:', admin.email, vendor.email, shop.name)
+  console.log('seeded: Sharma Kirana Store')
 }
 
 main()

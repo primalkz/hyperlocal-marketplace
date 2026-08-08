@@ -63,10 +63,10 @@ r = await admin.get('/admin/vendors')
 console.log('admin vendors:', r.body.vendors?.length)
 
 await v2.post('/auth/register', { email: 'v2@t.test', password: 'secret123', role: 'VENDOR' })
-await v2.post('/vendor/shop', { name: 'Shop Two', latitude: 19.05, longitude: 72.85 })
+await v2.post('/vendor/shop', { name: 'Anand Provisions', latitude: 19.05, longitude: 72.85 })
 r = await admin.patch('/admin/vendors/' + (await v2.get('/auth/me')).body.user.userId, { status: 'APPROVED' })
 console.log('v2 approved:', r.body.vendor?.shop?.status)
-r = await v2.post('/vendor/products', { title: 'X', image: 'https://picsum.photos/seed/x/400', price: 10, available: true })
+r = await v2.post('/vendor/products', { title: 'Tata Salt 1kg', image: 'https://picsum.photos/seed/salt/400', price: 10, available: true })
 const prod2 = r.body.product.id
 console.log('v2 product:', prod2)
 
