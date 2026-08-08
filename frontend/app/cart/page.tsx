@@ -45,15 +45,7 @@ export default function Cart() {
         <>
           <ul className="divide-y">
             {cart.items.map((i) => (
-              <li key={i.id} className="flex items-center gap-3 py-2">
-                <img src={i.product.image} alt="" className="h-10 w-10 rounded object-cover" />
-                <div className="flex-1">
-                  <div className="font-medium">{i.product.title}</div>
-                  <div className="text-sm text-gray-600">₹{i.product.price}</div>
-                </div>
-                <input type="number" min={0} value={i.quantity} onChange={(e) => setQty(i, Number(e.target.value))} className="w-16 rounded border p-1" />
-                <button onClick={() => remove(i)} className="text-sm text-red-600 underline">remove</button>
-              </li>
+              <CartItemRow key={i.id} item={i} onSet={setQty} onRemove={remove} />
             ))}
           </ul>
           <div className="flex items-center justify-between">
@@ -63,5 +55,27 @@ export default function Cart() {
         </>
       )}
     </div>
+  )
+}
+
+function CartItemRow({ item, onSet, onRemove }: { item: Item; onSet: (item: Item, q: number) => void; onRemove: (item: Item) => void }) {
+  const [val, setVal] = useState(String(item.quantity))
+  return (
+    <li className="flex items-center gap-3 py-2">
+      <img src={item.product.image} alt="" className="h-10 w-10 rounded object-cover" />
+      <div className="flex-1">
+        <div className="font-medium">{item.product.title}</div>
+        <div className="text-sm text-gray-600">₹{item.product.price}</div>
+      </div>
+      <input
+        type="number"
+        min={0}
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        onBlur={() => onSet(item, Number(val))}
+        className="w-16 rounded border p-1"
+      />
+      <button onClick={() => onRemove(item)} className="text-sm text-red-600 underline">remove</button>
+    </li>
   )
 }
