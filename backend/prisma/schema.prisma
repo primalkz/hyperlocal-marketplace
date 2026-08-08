@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+
+  shop   Shop?
+  cart   Cart?
+  orders Order[]
+}
+
+enum Role {
+  VENDOR
+  CUSTOMER
+  ADMIN
+}
+
+model Shop {
+  id        String     @id @default(cuid())
+  vendorId  String     @unique
+  vendor    User       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  name      String
+  latitude  Float
+  longitude Float
+  status    ShopStatus @default(PENDING)
+  createdAt DateTime   @default(now())
+
+  products Product[]
+  orders   Order[]
+  carts    Cart[]
+}
+
+enum ShopStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DISABLED
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  shopId    String
+  shop      Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  title     String
+  image     String
+  price     Decimal  @db.Decimal(10, 2)
+  available Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  cartItems CartItem[]
+}
+
+model Cart {
+  id         String   @id @default(cuid())
+  customerId String   @unique
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  shopId     String?
+  shop       Shop?    @relation(fields: [shopId], references: [id])
+  createdAt  DateTime @default(now())
+
+  items CartItem[]
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  cartId    String
+  cart      Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int    @default(1)
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   User     @relation(fields: [customerId], references: [id])
+  shopId     String
+  shop       Shop     @relation(fields: [shopId], references: [id])
+  total      Decimal  @db.Decimal(10, 2)
+  status     String   @default("PLACED")
+  createdAt  DateTime @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  title     String
+  image     String
+  price     Decimal @db.Decimal(10, 2)
+  quantity  Int
+}
