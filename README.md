@@ -86,9 +86,9 @@ local:
 - frontend http://localhost:3000
 - backend http://localhost:4000/api
 
-deployed (set after deploy, see deploy section):
-- frontend https://TBD
-- backend https://TBD/api
+deployed:
+- frontend https://hyperlocal-marketplace-y2g6.vercel.app
+- backend https://hyperlocal-marketplace-xi.vercel.app/api
 
 ## database
 
