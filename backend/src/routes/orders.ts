@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { Prisma } from '@prisma/client'
+import type { Order, OrderItem } from '@prisma/client'
 import { prisma } from '../prisma'
 import { requireRole } from '../auth'
 import { AppError } from '../errors'
@@ -7,14 +7,7 @@ import { AppError } from '../errors'
 const router = Router()
 router.use(requireRole('CUSTOMER'))
 
-function orderOut(order: {
-  id: string
-  shopId: string
-  total: Prisma.Decimal
-  status: string
-  createdAt: Date
-  items: { id: string; productId: string; title: string; image: string; price: Prisma.Decimal; quantity: number }[]
-}) {
+function orderOut(order: Order & { items: OrderItem[] }) {
   return {
     id: order.id,
     shopId: order.shopId,

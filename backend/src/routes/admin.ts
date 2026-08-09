@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import type { User, Shop } from '@prisma/client'
 import { prisma } from '../prisma'
 import { requireRole } from '../auth'
 import { validate, adminStatusSchema } from '../validate'
@@ -7,13 +8,7 @@ import { AppError } from '../errors'
 const router = Router()
 router.use(requireRole('ADMIN'))
 
-function vendorOut(v: {
-  id: string
-  email: string
-  role: string
-  createdAt: Date
-  shop: { id: string; name: string; status: string; latitude: number; longitude: number } | null
-}) {
+function vendorOut(v: User & { shop: Shop | null }) {
   return {
     id: v.id,
     email: v.email,
