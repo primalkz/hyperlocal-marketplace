@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import { Prisma } from '@prisma/client'
 import { prisma } from '../prisma'
 import { requireRole } from '../auth'
 import { validate, adminStatusSchema } from '../validate'

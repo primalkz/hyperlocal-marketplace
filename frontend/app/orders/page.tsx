@@ -36,7 +36,7 @@ export default function Orders() {
             </div>
             <ul className="mt-1 text-sm text-gray-700">
               {o.items.map((i, idx) => (
-                <li key={idx}>{i.quantity} × {i.title} — ₹{i.price}</li>
+                <li key={idx}>{i.quantity} × {i.title}, ₹{i.price}</li>
               ))}
             </ul>
           </li>

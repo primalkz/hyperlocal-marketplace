@@ -118,7 +118,7 @@ seven tables. full schema in `backend/prisma/schema.prisma`, migrations in `back
 - orderItem copies title, image and price instead of joining product. orders must not change if a product is edited or deleted later.
 - distance in node not sql. simpler and testable at this scale. for real scale i would push haversine into a sql function or use postgis.
 - prisma over raw sql. the schema file reads as documentation and migrations are a deliverable. the cost is a generated client i do not hand-write.
-- jsonwebtoken + bcrypt over hand-rolled crypto. audited, boring, easy to explain. the jwt lives in an httponly samesite cookie, none and secure in production so it survives cross-site fetch.
+- jsonwebtoken + bcrypt over hand-rolled crypto. boring, easy to explain. the jwt lives in an httponly samesite cookie, none and secure in production so it survives cross-site fetch.
 - express on vercel as one serverless function (zero config, src/app.ts is the default export). keeps everything on one host. the fallback is a long-running render instance and the code already supports it through src/server.ts.
 - zod for validation. the type inference earns the one dependency. schemas stay tiny.
 
