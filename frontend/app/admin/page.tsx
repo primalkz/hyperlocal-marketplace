@@ -20,7 +20,12 @@ type AdminOrder = {
   items: { title: string; quantity: number; price: number }[]
 }
 
-const btn = 'rounded border px-2 py-0.5 text-sm'
+const statusStyles: Record<string, string> = {
+  APPROVED: 'bg-emerald-100 text-emerald-700',
+  PENDING: 'bg-amber-100 text-amber-700',
+  REJECTED: 'bg-red-100 text-red-700',
+  DISABLED: 'bg-gray-200 text-gray-600',
+}
 
 export default function Admin() {
   const [vendors, setVendors] = useState<Vendor[]>([])
@@ -38,9 +43,7 @@ export default function Admin() {
       setErr((e as Error).message)
     }
   }
-  useEffect(() => {
-    load()
-  }, [])
+  useEffect(() => { load() }, [])
 
   async function setStatus(id: string, status: string) {
     setErr('')
@@ -53,41 +56,41 @@ export default function Admin() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="animate-fade-in-up space-y-8">
       <div>
-        <h1 className="text-xl font-bold">vendors</h1>
-        {err && <p className="text-sm text-red-600">{err}</p>}
-        <ul className="mt-2 divide-y">
+        <h1 className="text-2xl font-semibold tracking-tight">vendors</h1>
+        {err && <div className="error-box mt-3">{err}</div>}
+        <div className="mt-4 space-y-3">
           {vendors.map((v) => (
-            <li key={v.id} className="py-2">
-              <div className="flex justify-between">
-                <span className="font-medium">{v.email}</span>
-                <span className="text-sm text-gray-500">{v.shop?.status ?? 'no shop'}</span>
+            <div key={v.id} className="card flex items-center justify-between">
+              <div>
+                <div className="font-medium text-gray-900">{v.email}</div>
+                <div className="text-sm text-gray-500">{v.shop?.name ?? 'no shop yet'}</div>
               </div>
-              <div className="text-sm text-gray-600">{v.shop?.name}</div>
-              <div className="mt-1 flex gap-2">
-                <button className={btn} onClick={() => setStatus(v.id, 'APPROVED')}>approve</button>
-                <button className={btn} onClick={() => setStatus(v.id, 'REJECTED')}>reject</button>
-                <button className={btn} onClick={() => setStatus(v.id, 'DISABLED')}>disable</button>
+              <div className="flex items-center gap-2">
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[v.shop?.status ?? 'PENDING'] ?? statusStyles.PENDING}`}>{(v.shop?.status ?? 'pending').toLowerCase()}</span>
+                <button onClick={() => setStatus(v.id, 'APPROVED')} className="rounded-md bg-emerald-600 px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-emerald-700">approve</button>
+                <button onClick={() => setStatus(v.id, 'REJECTED')} className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50">reject</button>
+                <button onClick={() => setStatus(v.id, 'DISABLED')} className="rounded-md border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50">disable</button>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
 
       <div>
-        <h2 className="text-xl font-bold">orders</h2>
-        <ul className="mt-2 space-y-2">
+        <h2 className="text-2xl font-semibold tracking-tight">orders</h2>
+        <div className="mt-4 space-y-3">
           {orders.map((o) => (
-            <li key={o.id} className="rounded border p-2 text-sm">
+            <div key={o.id} className="card text-sm">
               <div className="flex justify-between">
-                <span>{o.customer} · {o.shop}</span>
-                <span>₹{o.total}</span>
+                <span className="font-medium text-gray-900">{o.customer} · {o.shop}</span>
+                <span className="font-semibold">₹{o.total.toLocaleString('en-IN')}</span>
               </div>
-              <div className="text-gray-500">{new Date(o.createdAt).toLocaleString()}</div>
-            </li>
+              <div className="mt-1 text-gray-400">{new Date(o.createdAt).toLocaleString()}</div>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   )

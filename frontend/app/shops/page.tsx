@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { api } from '../lib'
 import type { Shop } from '../lib'
@@ -13,8 +13,7 @@ export default function Shops() {
   const [err, setErr] = useState('')
   const [searched, setSearched] = useState(false)
 
-  async function find(e: React.FormEvent) {
-    e.preventDefault()
+  async function search() {
     setErr('')
     try {
       const d = await api(`/shops?lat=${lat}&lng=${lng}&radius=${radius}`)
@@ -23,25 +22,40 @@ export default function Shops() {
     } catch (e) { setErr((e as Error).message) }
   }
 
+  useEffect(() => { search() }, [])
+
+  async function find(e: React.FormEvent) {
+    e.preventDefault()
+    search()
+  }
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">shops near you</h1>
+    <div className="animate-fade-in-up space-y-6">
+      <h1 className="text-2xl font-semibold tracking-tight">shops near you</h1>
       <form onSubmit={find} className="flex flex-wrap gap-2">
-        <input className="rounded border p-2" placeholder="lat" value={lat} onChange={(e) => setLat(e.target.value)} />
-        <input className="rounded border p-2" placeholder="lng" value={lng} onChange={(e) => setLng(e.target.value)} />
-        <input className="w-20 rounded border p-2" placeholder="km" value={radius} onChange={(e) => setRadius(e.target.value)} />
-        <button className="rounded bg-black p-2 text-white">find</button>
+        <input className="input flex-1" placeholder="latitude" value={lat} onChange={(e) => setLat(e.target.value)} />
+        <input className="input flex-1" placeholder="longitude" value={lng} onChange={(e) => setLng(e.target.value)} />
+        <input className="input w-24" placeholder="km" value={radius} onChange={(e) => setRadius(e.target.value)} />
+        <button className="btn-primary">find</button>
       </form>
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      {searched && shops.length === 0 && <p className="text-gray-600">no shops within {radius} km.</p>}
-      <ul className="divide-y">
+      {err && <div className="error-box">{err}</div>}
+      {searched && shops.length === 0 && (
+        <div className="rounded-lg border border-dashed border-gray-300 py-12 text-center">
+          <p className="text-sm text-gray-500">no shops within {radius} km</p>
+          <p className="mt-1 text-xs text-gray-400">try increasing the search radius</p>
+        </div>
+      )}
+      <div className="grid gap-3 sm:grid-cols-2">
         {shops.map((s) => (
-          <li key={s.id} className="py-3">
-            <Link href={`/shops/${s.id}`} className="font-medium hover:underline">{s.name}</Link>
-            <div className="text-sm text-gray-600">{s.distance?.toFixed(2)} km away, {s._count?.products} products</div>
-          </li>
+          <Link key={s.id} href={`/shops/${s.id}`} className="card transition-all hover:shadow-card-hover hover:border-gray-300">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-gray-900">{s.name}</span>
+              <span className="text-sm font-medium text-emerald-600">{s.distance?.toFixed(1)} km</span>
+            </div>
+            <p className="mt-1 text-sm text-gray-500">{s._count?.products} products available</p>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

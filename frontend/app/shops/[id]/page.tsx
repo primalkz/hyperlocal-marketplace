@@ -5,6 +5,23 @@ import { useParams, useRouter } from 'next/navigation'
 import { api } from '../../lib'
 import type { Product } from '../../lib'
 
+function Skeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="h-7 w-48 animate-pulse rounded-lg bg-gray-200" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="space-y-2 rounded-lg border border-gray-200 p-3">
+            <div className="h-32 w-full animate-pulse rounded-md bg-gray-200" />
+            <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
+            <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function ShopProducts() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
@@ -25,23 +42,23 @@ export default function ShopProducts() {
     } catch (e) { setErr((e as Error).message) }
   }
 
-  if (!shop && !err) return <p>loading...</p>
+  if (!shop && !err) return <Skeleton />
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">{shop?.name ?? 'shop'}</h1>
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <div className="animate-fade-in-up space-y-6">
+      <h1 className="text-2xl font-semibold tracking-tight">{shop?.name ?? 'shop'}</h1>
+      {err && <div className="error-box">{err}</div>}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {products.map((p) => (
-          <li key={p.id} className="rounded border p-3">
-            <img src={p.image} alt="" className="mb-2 h-24 w-full rounded object-cover" />
-            <div className="font-medium">{p.title}</div>
-            <div className="text-sm text-gray-600">₹{p.price}</div>
-            <button onClick={() => add(p)} disabled={!p.available} className="mt-2 w-full rounded bg-black p-1.5 text-sm text-white disabled:opacity-40">
+          <div key={p.id} className="group rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-all hover:shadow-card-hover hover:border-gray-300">
+            <img src={p.image} alt={p.title} className="mb-3 h-32 w-full rounded-md object-cover" />
+            <div className="text-sm font-medium leading-snug">{p.title}</div>
+            <div className="mt-1 text-sm font-semibold text-gray-900">₹{p.price}</div>
+            <button onClick={() => add(p)} disabled={!p.available} className="btn-primary mt-3 w-full text-xs py-2">
               {p.available ? 'add to cart' : 'unavailable'}
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

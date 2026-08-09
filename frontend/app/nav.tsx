@@ -19,32 +19,32 @@ export default function Nav() {
   }, [path])
 
   async function logout() {
-    await api('/auth/logout', { method: 'POST' })
+    try { await api('/auth/logout', { method: 'POST' }) } catch {}
     setRole(null)
     router.push('/')
     router.refresh()
   }
 
-  const link = (href: string, label: string) => (
-    <Link href={href} className={`rounded-md px-2.5 py-1 ${path === href ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}>{label}</Link>
-  )
+  const link = (href: string, label: string) => {
+    const active = path === href
+    return (
+      <Link href={href} className={`rounded-md px-2.5 py-1.5 text-sm transition-colors ${active ? 'font-medium text-emerald-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}>{label}</Link>
+    )
+  }
 
   return (
-    <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur">
-      <nav className="mx-auto flex max-w-4xl items-center gap-1 px-4 py-3 text-sm">
-        <Link href="/" className="mr-2 flex items-center gap-2 font-bold">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-          hyperlocal
-        </Link>
-        {loaded && role === 'CUSTOMER' && <>{link('/shops', 'shops')}{link('/cart', 'cart')}{link('/orders', 'orders')}</>}
-        {loaded && role === 'VENDOR' && link('/vendor', 'my shop')}
-        {loaded && role === 'ADMIN' && link('/admin', 'admin')}
+    <header className="sticky top-0 z-50 border-b border-gray-200/60 bg-white/80 backdrop-blur-md">
+      <nav className="mx-auto flex max-w-5xl items-center gap-1 px-4 py-3 sm:px-6">
+        <Link href="/" className="mr-4 font-semibold text-gray-900">hyperlocal</Link>
+        <div className="flex items-center gap-0.5">
+          {loaded && role === 'CUSTOMER' && <>{link('/shops', 'shops')}{link('/cart', 'cart')}{link('/orders', 'orders')}</>}
+          {loaded && role === 'VENDOR' && link('/vendor', 'my shop')}
+          {loaded && role === 'ADMIN' && link('/admin', 'admin')}
+        </div>
         <div className="ml-auto">
-          {!loaded ? null : role ? (
-            <button onClick={logout} className="rounded-md px-2.5 py-1 text-gray-500 hover:bg-gray-100 hover:text-gray-900">logout</button>
-          ) : (
-            <>{link('/login', 'login')}{link('/register', 'register')}</>
-          )}
+          {!loaded ? <div className="h-8 w-16 animate-pulse rounded-md bg-gray-200" /> : role ? (
+            <button onClick={logout} className="rounded-md px-2.5 py-1.5 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900">logout</button>
+          ) : <div className="flex items-center gap-0.5">{link('/login', 'login')}{link('/register', 'register')}</div>}
         </div>
       </nav>
     </header>

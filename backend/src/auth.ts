@@ -32,7 +32,13 @@ export function setTokenCookie(res: Response, token: string) {
 }
 
 export function clearTokenCookie(res: Response) {
-  res.clearCookie(COOKIE, { path: '/' })
+  const secure = process.env.NODE_ENV === 'production'
+  res.clearCookie(COOKIE, {
+    httpOnly: true,
+    sameSite: secure ? 'none' : 'lax',
+    secure,
+    path: '/',
+  })
 }
 
 type Session = { userId: string; role: string }

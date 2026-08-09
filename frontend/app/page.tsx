@@ -17,12 +17,12 @@ export default function Home() {
   }, [router])
 
   return (
-    <div className="py-12">
-      <h1 className="text-4xl font-bold tracking-tight">local grocery, <span className="text-emerald-600">nearby</span></h1>
-      <p className="mt-3 max-w-md text-gray-600">vendors run their own catalogue, customers find shops close by and place orders.</p>
-      <div className="mt-6 flex gap-3">
-        <Link href="/login" className="rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white hover:bg-emerald-700">login</Link>
-        <Link href="/register" className="rounded-lg border border-gray-300 px-4 py-2 font-medium hover:bg-gray-100">register</Link>
+    <div className="animate-fade-in-up py-16 text-center">
+      <h1 className="text-5xl font-semibold tracking-tight">local grocery, <span className="text-emerald-600">nearby</span></h1>
+      <p className="mx-auto mt-4 max-w-md text-gray-500">vendors run their own catalogue, customers find shops close by and place orders.</p>
+      <div className="mt-8 flex justify-center gap-3">
+        <Link href="/login" className="btn-primary">login</Link>
+        <Link href="/register" className="btn-secondary">register</Link>
       </div>
     </div>
   )

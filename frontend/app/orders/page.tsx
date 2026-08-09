@@ -23,25 +23,30 @@ export default function Orders() {
   }, [])
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">your orders</h1>
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      {orders.length === 0 && !err && <p className="text-gray-600">no orders yet.</p>}
-      <ul className="space-y-3">
+    <div className="animate-fade-in-up space-y-6">
+      <h1 className="text-2xl font-semibold tracking-tight">your orders</h1>
+      {err && <div className="error-box">{err}</div>}
+      {orders.length === 0 && !err && (
+        <div className="rounded-lg border border-dashed border-gray-300 py-12 text-center">
+          <p className="text-sm text-gray-500">no orders yet</p>
+        </div>
+      )}
+      <div className="space-y-3">
         {orders.map((o) => (
-          <li key={o.id} className="rounded border p-3">
+          <div key={o.id} className="card">
             <div className="flex justify-between">
-              <span className="font-medium">₹{o.total} · {o.status}</span>
-              <span className="text-sm text-gray-500">{new Date(o.createdAt).toLocaleString()}</span>
+              <span className="font-semibold text-gray-900">₹{o.total.toLocaleString('en-IN')}</span>
+              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">{o.status.toLowerCase()}</span>
             </div>
-            <ul className="mt-1 text-sm text-gray-700">
+            <div className="mt-1 text-xs text-gray-400">{new Date(o.createdAt).toLocaleString()}</div>
+            <ul className="mt-3 space-y-1 text-sm text-gray-600">
               {o.items.map((i, idx) => (
                 <li key={idx}>{i.quantity} × {i.title}, ₹{i.price}</li>
               ))}
             </ul>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

@@ -6,8 +6,6 @@ import type { Product } from '../lib'
 
 type Shop = { id: string; name: string; latitude: number; longitude: number; status: string } | null
 
-const input = 'w-full rounded border p-2'
-
 export default function Vendor() {
   const [shop, setShop] = useState<Shop>(null)
   const [products, setProducts] = useState<Product[]>([])
@@ -64,47 +62,47 @@ export default function Vendor() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="animate-fade-in-up space-y-8">
       <div>
-        <h1 className="text-xl font-bold">my shop</h1>
-        {shop && shop.status !== 'APPROVED' && <p className="text-sm text-amber-700">status: {shop.status}</p>}
-        {err && <p className="text-sm text-red-600">{err}</p>}
-        <form onSubmit={saveShop} className="mt-2 grid grid-cols-3 gap-2">
-          <input className={input} placeholder="shop name" value={name} onChange={(e) => setName(e.target.value)} />
-          <input className={input} placeholder="lat" value={lat} onChange={(e) => setLat(e.target.value)} />
-          <input className={input} placeholder="lng" value={lng} onChange={(e) => setLng(e.target.value)} />
-          <button className="col-span-3 rounded bg-black p-2 text-white">{shop ? 'update shop' : 'create shop'}</button>
+        <h1 className="text-2xl font-semibold tracking-tight">my shop</h1>
+        {shop && shop.status !== 'APPROVED' && <span className="mt-2 inline-block rounded-full bg-amber-100 px-3 py-0.5 text-xs font-medium text-amber-700">status: {shop.status.toLowerCase()}</span>}
+        {err && <div className="error-box mt-3">{err}</div>}
+        <form onSubmit={saveShop} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <input className="input" placeholder="shop name" value={name} onChange={(e) => setName(e.target.value)} />
+          <input className="input" placeholder="latitude" value={lat} onChange={(e) => setLat(e.target.value)} />
+          <input className="input" placeholder="longitude" value={lng} onChange={(e) => setLng(e.target.value)} />
+          <button className="btn-primary col-span-1 sm:col-span-3">{shop ? 'update shop' : 'create shop'}</button>
         </form>
       </div>
 
       <div>
-        <h2 className="font-bold">products</h2>
-        <form onSubmit={saveProduct} className="mt-2 space-y-2">
-          <input className={input} placeholder="title" value={ptitle} onChange={(e) => setPtitle(e.target.value)} />
-          <input className={input} placeholder="image url" value={pimg} onChange={(e) => setPimg(e.target.value)} />
-          <div className="flex gap-2">
-            <input className={input} placeholder="price" type="number" step="0.01" value={pprice} onChange={(e) => setPprice(e.target.value)} />
-            <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={pavail} onChange={(e) => setPavail(e.target.checked)} /> available</label>
+        <h2 className="text-lg font-semibold">products</h2>
+        <form onSubmit={saveProduct} className="mt-4 space-y-3">
+          <input className="input" placeholder="product title" value={ptitle} onChange={(e) => setPtitle(e.target.value)} />
+          <input className="input" placeholder="image url" value={pimg} onChange={(e) => setPimg(e.target.value)} />
+          <div className="flex gap-3">
+            <input className="input" placeholder="price" type="number" step="0.01" value={pprice} onChange={(e) => setPprice(e.target.value)} />
+            <label className="flex items-center gap-2 whitespace-nowrap text-sm text-gray-700"><input type="checkbox" checked={pavail} onChange={(e) => setPavail(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-emerald-600" /> available</label>
           </div>
           <div className="flex gap-2">
-            <button className="rounded bg-black p-2 text-white">{editId ? 'update' : 'add'} product</button>
-            {editId && <button type="button" onClick={reset} className="rounded border p-2">cancel</button>}
+            <button className="btn-primary">{editId ? 'update' : 'add'} product</button>
+            {editId && <button type="button" onClick={reset} className="btn-secondary">cancel</button>}
           </div>
         </form>
 
-        <ul className="mt-3 divide-y">
+        <div className="mt-4 space-y-2">
           {products.map((p) => (
-            <li key={p.id} className="flex items-center gap-3 py-2">
-              <img src={p.image} alt="" className="h-10 w-10 rounded object-cover" />
+            <div key={p.id} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3">
+              <img src={p.image} alt="" className="h-10 w-10 rounded-md object-cover" />
               <div className="flex-1">
-                <div className="font-medium">{p.title} {p.available ? '' : <span className="text-xs text-gray-500">(unavailable)</span>}</div>
-                <div className="text-sm text-gray-600">₹{p.price}</div>
+                <div className="text-sm font-medium">{p.title} {!p.available && <span className="text-xs text-gray-400">(unavailable)</span>}</div>
+                <div className="text-sm text-gray-500">₹{p.price}</div>
               </div>
-              <button onClick={() => edit(p)} className="text-sm underline">edit</button>
-              <button onClick={() => del(p.id)} className="text-sm text-red-600 underline">delete</button>
-            </li>
+              <button onClick={() => edit(p)} className="text-sm text-emerald-600 hover:text-emerald-700">edit</button>
+              <button onClick={() => del(p.id)} className="text-sm text-red-500 hover:text-red-700">delete</button>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   )
