@@ -43,25 +43,23 @@ router.post('/items', validate(cartItemSchema), async (req, res, next) => {
   if (!product || product.shop.status !== 'APPROVED') return next(new AppError(404, 'product not found'))
   if (!product.available) return next(new AppError(400, 'product unavailable'))
 
-  let cart = await prisma.cart.findUnique({ where: { customerId: req.user!.userId } })
+  const cart = await prisma.cart.findUnique({ where: { customerId: req.user!.userId } })
   if (cart && cart.shopId && cart.shopId !== product.shopId) {
     return next(new AppError(409, 'cart already holds items from another shop'))
   }
 
-  cart = await prisma.cart.upsert({
-    where: { customerId: req.user!.userId },
-    create: { customerId: req.user!.userId, shopId: product.shopId },
-    update: { shopId: product.shopId },
+  await prisma.$transaction(async (tx) => {
+    const c = await tx.cart.upsert({
+      where: { customerId: req.user!.userId },
+      create: { customerId: req.user!.userId, shopId: product.shopId },
+      update: { shopId: product.shopId },
+    })
+    await tx.cartItem.upsert({
+      where: { cartId_productId: { cartId: c.id, productId } },
+      create: { cartId: c.id, productId, quantity },
+      update: { quantity: { increment: quantity } },
+    })
   })
-
-  const existing = await prisma.cartItem.findUnique({
-    where: { cartId_productId: { cartId: cart.id, productId } },
-  })
-  if (existing) {
-    await prisma.cartItem.update({ where: { id: existing.id }, data: { quantity: existing.quantity + quantity } })
-  } else {
-    await prisma.cartItem.create({ data: { cartId: cart.id, productId, quantity } })
-  }
 
   const fresh = await loadCart(req.user!.userId)
   res.status(201).json({ cart: cartOut(fresh) })

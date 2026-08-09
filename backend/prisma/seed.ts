@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { prisma } from '../src/prisma'
 import { hashPassword } from '../src/auth'
 
-const img = (seed) => `https://picsum.photos/seed/${seed}/400/300`
+const img = (seed: string) => `https://picsum.photos/seed/${seed}/400/300`
 
 async function main() {
   await prisma.user.upsert({

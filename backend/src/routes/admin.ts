@@ -34,7 +34,7 @@ router.get('/vendors', async (_req, res) => {
 router.patch('/vendors/:id', validate(adminStatusSchema), async (req, res, next) => {
   const { status } = req.body
   const vendor = await prisma.user.findUnique({
-    where: { id: req.params.id },
+    where: { id: req.params.id as string },
     include: { shop: true },
   })
   if (!vendor || vendor.role !== 'VENDOR') return next(new AppError(404, 'vendor not found'))
