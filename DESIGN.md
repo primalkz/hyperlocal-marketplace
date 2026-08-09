@@ -14,7 +14,7 @@ one table with a role enum (vendor, customer, admin). considered splitting into 
 
 ## shop approval
 
-shops have a status: pending, approved, rejected, disabled. a vendor registers and creates a shop, it starts pending. admin moves it to approved or rejected, and can disable later. customers only ever see approved and not-disabled shops. a disabled vendor can still log in (so they see why) but every mutation returns 403. the gating is a where clause on status, not a separate check.
+shops have a status: pending, approved, rejected, disabled. a vendor registers and creates a shop, it starts pending. admin moves it to approved or rejected, and can disable later. customers only ever see approved and not-disabled shops. a rejected or disabled vendor can still log in (so they see why) but every mutation returns 403, via a small assertActive check in the mutating handlers.
 
 ## cart pinned to one shop
 

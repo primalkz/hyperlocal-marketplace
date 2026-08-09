@@ -106,7 +106,7 @@ seven tables. full schema in `backend/prisma/schema.prisma`, migrations in `back
 - one cart per customer, pinned to one shop. adding a product from a different shop returns 409. the customer clears the cart themselves. no silent clear.
 - images are url strings. production would use s3 or an upload service.
 - vendors can build their catalogue while pending. shops show to customers only when approved and not disabled.
-- a disabled vendor can log in but mutations return 403.
+- a rejected or disabled vendor can log in but mutations return 403.
 - no order status workflow. orders land as PLACED and stay there.
 - nearby default radius 5 km. distance is haversine computed in node, not in the database.
 - admin is seeded, never self-registered.
